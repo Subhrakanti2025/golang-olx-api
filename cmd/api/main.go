@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Subhrakanti2025/golang-olx-api/internal/config"
+	"github.com/Subhrakanti2025/golang-olx-api/internal/handlers"
 )
 
 func main() {
@@ -15,11 +16,7 @@ func main() {
 	cfg := config.MustLoad()
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status":"ok"}`))
-	})
+	mux.HandleFunc("GET /healthz", handlers.Health)
 	fmt.Println("Running")
 	srv := http.Server{
 		Addr:         ":" + cfg.Port,
