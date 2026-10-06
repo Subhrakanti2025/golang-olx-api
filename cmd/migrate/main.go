@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/Subhrakanti2025/golang-olx-api/internal/config"
 	"github.com/golang-migrate/migrate/v4"
@@ -39,10 +40,14 @@ func main() {
 
 	case "force":
 		if len(os.Args) < 3 {
-			log.Fatal("Mention migration version, example: force 0")
+			log.Fatal("Mention migration version, example: force <version>")
 		}
 		fmt.Println("migration force", os.Args[2])
-		if err := m.Force(-1); err != nil {
+		version, err := strconv.Atoi(os.Args[2])
+		if err != nil {
+			log.Fatal("Invalid migration version")
+		}
+		if err := m.Force(version); err != nil {
 			log.Fatal("migration force error: ", err)
 		}
 
