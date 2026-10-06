@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Subhrakanti2025/golang-olx-api/internal/config"
+	"github.com/Subhrakanti2025/golang-olx-api/internal/db"
 	"github.com/Subhrakanti2025/golang-olx-api/internal/handlers"
 )
 
@@ -14,6 +15,11 @@ func main() {
 	// why w is not pointer and why r is pointer
 
 	cfg := config.MustLoad()
+	_, err := db.Connect(cfg.DatabaseUrl)
+	if err != nil {
+		log.Fatalf("DB is not connected: %v", err)
+	}
+	fmt.Println("Database connected")
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("GET /healthz", handlers.Health)
