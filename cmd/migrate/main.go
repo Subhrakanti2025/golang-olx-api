@@ -34,7 +34,8 @@ func main() {
 		}
 	case "down":
 		fmt.Println("migration down")
-		if err := m.Down(); err != nil {
+		// Fix tomorrow
+		if err := m.Steps(-1); err != nil {
 			log.Fatal("migration down error", err)
 		}
 
