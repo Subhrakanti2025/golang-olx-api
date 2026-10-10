@@ -21,9 +21,10 @@ func main() {
 	}
 	fmt.Println("Database connected")
 	mux := http.NewServeMux()
-
+	lh := handlers.NewDbConstructor(db)
 	mux.HandleFunc("GET /healthz", handlers.Health)
-	mux.HandleFunc("GET /listing", handlers.List(db))
+	mux.HandleFunc("GET /listing", lh.List)
+	mux.HandleFunc("DELETE /listing/{id}", lh.DeleteList)
 	fmt.Println("Running")
 	srv := http.Server{
 		Addr:         ":" + cfg.Port,
