@@ -15,7 +15,7 @@ func Connect(dataBaseUrl string) (*sql.DB, error) {
 		return nil, fmt.Errorf("sql.Open: %w", err)
 	}
 	// read database pooling
-	db.SetMaxIdleConns(25)
+	db.SetMaxOpenConns(50)
 	db.SetMaxIdleConns(25)
 	db.SetConnMaxIdleTime(5 * time.Minute)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

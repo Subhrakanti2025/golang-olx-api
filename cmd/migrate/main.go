@@ -14,11 +14,18 @@ import (
 
 func main() {
 	fmt.Println("runnign migration", os.Args)
+
+	// Check whether the user provided a migration command.
+	// Example: up, down, or force.
 	if len(os.Args) < 2 {
 		log.Fatal("Mention migration type like <up | down | force>")
 	}
 
 	cfg := config.MustLoad()
+
+	// Initialize the migration instance.
+	// "file://migrations" specifies the directory containing .sql migration files.
+	// cfg.DatabaseUrl provides the database connection URL.
 	m, err := migrate.New(
 		"file://migrations",
 		cfg.DatabaseUrl)
@@ -27,18 +34,36 @@ func main() {
 	}
 	defer m.Close()
 	switch os.Args[1] {
+
+	// CASE 1: UP MIGRATION
+	// Execute all pending UP migrations.
+	// It applies database changes that have not yet been executed.
+	// Example: go run ./cmd/migrate/main.go up
 	case "up":
 		fmt.Println("migration up")
 		if err := m.Up(); err != nil {
 			log.Fatal("migration up error", err)
 		}
+
+	// CASE 2: DOWN MIGRATION
+	// Roll back the most recently applied migration.
+	// m.Steps(-1) means execute one DOWN migration.
+	// Example: go run ./cmd/migrate/main.go down
 	case "down":
 		fmt.Println("migration down")
-		// Fix tomorrow
 		if err := m.Steps(-1); err != nil {
 			log.Fatal("migration down error", err)
 		}
 
+	// CASE 3: FORCE MIGRATION
+	// Manually change the migration version stored in the database.
+	// Useful when resolving a dirty migration state after inspecting and
+	// reconciling the actual database schema.
+	// Example: go run ./cmd/migrate/main.go force 1
+	// os.Args[2] contains the version as a string ("1").
+	// strconv.Atoi() converts that string into an integer (1).
+	// m.Force() updates migration tracking; it DOES NOT execute SQL files
+	// or repair the actual database schema.
 	case "force":
 		if len(os.Args) < 3 {
 			log.Fatal("Mention migration version, example: force <version>")
@@ -52,6 +77,9 @@ func main() {
 			log.Fatal("migration force error: ", err)
 		}
 
+	// DEFAULT CASE
+	// Executes when the user provides an unsupported migration command.
+	// Example: go run ./cmd/migrate/main.go something
 	default:
 		log.Fatal("Mention your migration type")
 	}
