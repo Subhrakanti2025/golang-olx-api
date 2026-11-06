@@ -15,5 +15,5 @@ migrate-run-up: migrate-build
 migrate-run-down: migrate-build
 	@./bin/migrate down
 
-migrate-force-0:
-	@go run ./cmd/migrate force 0
+migrate-force:
+	@go run ./cmd/migrate force $(VERSION)	

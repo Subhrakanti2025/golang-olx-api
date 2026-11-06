@@ -31,10 +31,12 @@ func main() {
 	slog.SetDefault(logger)
 	mux := http.NewServeMux()
 	lh := handlers.NewDbConstructor(db, logger)
+	usr := handlers.NewDbConstructorForAuth(db, logger)
 	mux.HandleFunc("GET /healthz", handlers.Health)
 	mux.HandleFunc("GET /listing", lh.List)
 	mux.HandleFunc("DELETE /listing/{id}", lh.DeleteList)
 	mux.HandleFunc("POST /listing", lh.CreateList)
+	mux.HandleFunc("POST /user", usr.CreateUser)
 	fmt.Println("Running")
 	handler := middleware.RequestId(mux)
 	srv := http.Server{
